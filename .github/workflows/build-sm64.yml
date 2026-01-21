@@ -11,27 +11,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Wait for ROM upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: upload-your-rom-here
-          path: ./placeholder.txt
-
-      - name: Download ROM artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: upload-your-rom-here
-          path: baserom
-
-      - name: Rename ROM
+      - name: Download ROM ZIP from Release
         run: |
+          mkdir -p baserom
+          curl -L -o baserom/rom.zip \
+            $(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest \
+            | grep "browser_download_url" \
+            | cut -d '"' -f 4)
+
+      - name: Unzip ROM
+        run: |
+          unzip baserom/rom.zip -d baserom
           mv baserom/*.z64 baserom/baserom.us.z64
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential python3 libpng-dev \
-            binutils-mips-linux-gnu gcc-mips-linux-gnu
+            binutils-mips-linux-gnu gcc-mips-linux-gnu unzip
 
       - name: Build SM64
         run: |
