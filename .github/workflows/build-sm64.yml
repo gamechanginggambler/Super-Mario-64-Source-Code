@@ -2,11 +2,6 @@ name: Build SM64
 
 on:
   workflow_dispatch:
-    inputs:
-      baserom:
-        description: "Upload your legally dumped baserom (SM64.z64)"
-        required: true
-        type: file
 
 jobs:
   build:
@@ -16,16 +11,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Wait for ROM upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: upload-your-rom-here
+          path: ./placeholder.txt
+
+      - name: Download ROM artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: upload-your-rom-here
+          path: baserom
+
+      - name: Rename ROM
+        run: |
+          mv baserom/*.z64 baserom/baserom.us.z64
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential python3 libpng-dev \
             binutils-mips-linux-gnu gcc-mips-linux-gnu
-
-      - name: Place baserom
-        run: |
-          mkdir -p baserom
-          cp "${{ github.event.inputs.baserom }}" baserom/baserom.us.z64
 
       - name: Build SM64
         run: |
