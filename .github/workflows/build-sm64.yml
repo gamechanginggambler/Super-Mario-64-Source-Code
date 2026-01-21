@@ -18,7 +18,7 @@ jobs:
       - name: Unzip ROM
         run: |
           unzip rom.zip
-          mv "Super Mario (USA).z64" baserom.us.z64
+          mv "Super Mario 64 (USA).z64" baserom.us.z64
 
       - name: Install dependencies
         run: |
