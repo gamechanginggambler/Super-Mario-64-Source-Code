@@ -10,7 +10,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+    
+      - name: Inspect ZIP contents
+        run: |
+          unzip -l baserom/rom.zip
+          
       - name: Download ROM ZIP
         run: |
           mkdir -p baserom
